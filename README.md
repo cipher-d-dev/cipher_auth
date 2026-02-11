@@ -13,28 +13,26 @@
 ## ✨ Why Cipher Auth?
 
 ### 🎯 Built on Proven Foundations
-
 Cipher Auth leverages battle-tested OAuth implementations from **Passport.js** - a library trusted in production by millions of applications for over a decade. We stand on the shoulders of giants, then add the modern DX you deserve.
 
 ### 🚀 What Makes Us Different
 
-| Feature                     | Cipher Auth                   | Passport.js       | Clerk                    |
-| --------------------------- | ----------------------------- | ----------------- | ------------------------ |
-| **TypeScript-First**        | ✅ Full type safety           | ⚠️ JS with types  | ✅ Yes                   |
-| **Modern Async/Await**      | ✅ Native promises            | ❌ Callbacks      | ✅ Yes                   |
-| **Pre-built UI Components** | ✅ Customizable               | ❌ None           | ⚠️ Limited customization |
-| **Self-Hostable**           | ✅ Fully                      | ✅ Yes            | ❌ Managed only          |
-| **Database Agnostic**       | ✅ Multiple adapters          | ⚠️ DIY            | ⚠️ Locked-in             |
-| **Framework Agnostic**      | ✅ Express, Next.js, Fastify+ | ⚠️ Mostly Express | ✅ Yes                   |
-| **No Vendor Lock-in**       | ✅ Open source                | ✅ Open source    | ❌ Proprietary           |
-| **Pricing**                 | 🆓 Free forever               | 🆓 Free           | 💰 Usage-based           |
+| Feature | Cipher Auth | Passport.js | Clerk |
+|---------|-------------|-------------|-------|
+| **TypeScript-First** | ✅ Full type safety | ⚠️ JS with types | ✅ Yes |
+| **Modern Async/Await** | ✅ Native promises | ❌ Callbacks | ✅ Yes |
+| **Pre-built UI Components** | ✅ Customizable | ❌ None | ⚠️ Limited customization |
+| **Self-Hostable** | ✅ Fully | ✅ Yes | ❌ Managed only |
+| **Database Agnostic** | ✅ Multiple adapters | ⚠️ DIY | ⚠️ Locked-in |
+| **Framework Agnostic** | ✅ Express, Next.js, Fastify+ | ⚠️ Mostly Express | ✅ Yes |
+| **No Vendor Lock-in** | ✅ Open source | ✅ Open source | ❌ Proprietary |
+| **Pricing** | 🆓 Free forever | 🆓 Free | 💰 Usage-based |
 
 ---
 
 ## 🎨 Features
 
 ### 🔑 **Authentication Strategies**
-
 - ✅ **Local** - Email/password with secure hashing (argon2)
 - ✅ **Magic Link** - Passwordless email authentication
 - ✅ **OAuth 2.0** - Google, GitHub, Facebook, Twitter, and more
@@ -43,16 +41,15 @@ Cipher Auth leverages battle-tested OAuth implementations from **Passport.js** -
 - 🔜 **LDAP/Active Directory** - On-premise integration
 
 ### 🎨 **Pre-built UI Components**
-
 ```tsx
-import { SignInForm, AuthProvider } from "@cipher-auth/react";
+import { SignInForm, AuthProvider } from '@cipher-auth/react';
 
 function App() {
   return (
     <AuthProvider>
-      <SignInForm
-        providers={["google", "github"]}
-        onSuccess={(user) => console.log("Welcome!", user)}
+      <SignInForm 
+        providers={['google', 'github']}
+        onSuccess={(user) => console.log('Welcome!', user)}
       />
     </AuthProvider>
   );
@@ -65,7 +62,6 @@ function App() {
 - Dark mode support
 
 ### 🛡️ **Enterprise-Grade Security**
-
 - ✅ **CSRF Protection** - Built-in token validation
 - ✅ **Rate Limiting** - Configurable brute-force protection
 - ✅ **Session Management** - Redis, PostgreSQL, MongoDB, or in-memory
@@ -74,11 +70,10 @@ function App() {
 - ✅ **Device Tracking** - Monitor and manage active sessions
 
 ### 🗄️ **Database Agnostic**
-
 ```typescript
-import { CipherAuth } from "@cipher-auth/core";
-import { MongooseAdapter } from "@cipher-auth/mongoose";
-import { PrismaAdapter } from "@cipher-auth/prisma";
+import { CipherAuth } from '@cipher-auth/core';
+import { MongooseAdapter } from '@cipher-auth/mongoose';
+import { PrismaAdapter } from '@cipher-auth/prisma';
 
 // Use any database you want
 const auth = new CipherAuth({
@@ -89,7 +84,6 @@ const auth = new CipherAuth({
 ```
 
 ### 🔧 **Framework Support**
-
 - Express
 - Next.js (App Router & Pages Router)
 - Fastify
@@ -111,52 +105,59 @@ npm install @cipher-auth/core @cipher-auth/mongoose
 npm install @cipher-auth/react @cipher-auth/client
 ```
 
-### Backend Setup (Express + MongoDB)
+### Backend Setup (Standalone Server)
 
 ```typescript
-import express from "express";
-import { CipherAuth } from "@cipher-auth/core";
-import { MongooseAdapter } from "@cipher-auth/mongoose";
-import { LocalStrategy, GoogleStrategy } from "@cipher-auth/strategies";
+import { CipherAuth } from '@cipher-auth/core';
+import { MongooseAdapter } from '@cipher-auth/mongoose';
+import { LocalStrategy, GoogleStrategy } from '@cipher-auth/strategies';
 
-const app = express();
-
-// Initialize Cipher Auth
+// Initialize Cipher Auth - it manages the server for you
 const auth = new CipherAuth({
   adapter: new MongooseAdapter({
-    uri: process.env.MONGODB_URI,
+    uri: process.env.MONGODB_URI
   }),
   session: {
     secret: process.env.SESSION_SECRET,
-    store: "redis", // or 'memory' for development
+    store: 'redis' // or 'memory' for development
   },
+  server: {
+    port: 3000,
+    cors: {
+      origin: 'http://localhost:5173' // Your frontend URL
+    }
+  }
 });
 
 // Register strategies
 auth.use(new LocalStrategy());
-auth.use(
-  new GoogleStrategy({
-    clientId: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "/auth/google/callback",
-  }),
-);
+auth.use(new GoogleStrategy({
+  clientId: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: '/auth/google/callback'
+}));
 
-// Apply middleware
-app.use(auth.initialize());
-app.use(auth.session());
+// Start the auth server
+auth.listen();
+```
 
-// Auth routes
-app.post("/auth/signup", auth.authenticate("local-signup"));
-app.post("/auth/login", auth.authenticate("local"));
-app.get("/auth/google", auth.authenticate("google"));
-app.get(
-  "/auth/google/callback",
-  auth.authenticate("google", {
-    successRedirect: "/dashboard",
-    failureRedirect: "/login",
-  }),
-);
+**Or integrate with your existing Express app:**
+
+```typescript
+import express from 'express';
+import { CipherAuth } from '@cipher-auth/core';
+
+const app = express();
+
+const auth = new CipherAuth({
+  // ... config
+});
+
+auth.use(new LocalStrategy());
+auth.use(new GoogleStrategy({ /* ... */ }));
+
+// Mount Cipher Auth routes on your app
+app.use('/auth', auth.router());
 
 app.listen(3000);
 ```
@@ -164,7 +165,7 @@ app.listen(3000);
 ### Frontend Setup (React)
 
 ```tsx
-import { AuthProvider, SignInForm, useAuth } from "@cipher-auth/react";
+import { AuthProvider, SignInForm, useAuth } from '@cipher-auth/react';
 
 function App() {
   return (
@@ -179,19 +180,19 @@ function App() {
 
 function LoginPage() {
   return (
-    <SignInForm
-      providers={["google", "github"]}
+    <SignInForm 
+      providers={['google', 'github']}
       enableMagicLink
-      onSuccess={(user) => (window.location.href = "/dashboard")}
+      onSuccess={(user) => window.location.href = '/dashboard'}
     />
   );
 }
 
 function ProtectedDashboard() {
   const { user, logout } = useAuth();
-
+  
   if (!user) return <Navigate to="/login" />;
-
+  
   return (
     <div>
       <h1>Welcome, {user.email}</h1>
@@ -239,7 +240,6 @@ We don't reinvent authentication - we make it **better**:
 ### Transparency
 
 We believe in being open about our approach:
-
 - Built on Passport.js OAuth strategies (MIT licensed)
 - Custom implementations for session management, user handling, and UI
 - All source code available on [GitHub](https://github.com/yourusername/cipher-auth)
@@ -249,7 +249,6 @@ We believe in being open about our approach:
 ## 🛣️ Roadmap
 
 ### ✅ v1.0 (Current)
-
 - [x] Core authentication SDK
 - [x] Local, Magic Link, OAuth strategies
 - [x] React components & hooks
@@ -257,7 +256,6 @@ We believe in being open about our approach:
 - [x] Express & Next.js support
 
 ### 🚧 v1.1 (Next)
-
 - [ ] Multi-factor authentication (TOTP, SMS, WebAuthn)
 - [ ] Vue & Svelte components
 - [ ] RBAC & permissions system
@@ -265,7 +263,6 @@ We believe in being open about our approach:
 - [ ] CLI tool for scaffolding
 
 ### 🔮 v2.0 (Future)
-
 - [ ] SAML 2.0 support
 - [ ] LDAP/Active Directory
 - [ ] Custom OAuth strategy builder
@@ -300,15 +297,15 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines.
 
 ## 📦 Packages
 
-| Package                 | Version                                                    | Description                  |
-| ----------------------- | ---------------------------------------------------------- | ---------------------------- |
-| `@cipher-auth/core`     | ![npm](https://img.shields.io/npm/v/@cipher-auth/core)     | Core authentication SDK      |
-| `@cipher-auth/client`   | ![npm](https://img.shields.io/npm/v/@cipher-auth/client)   | Framework-agnostic client    |
-| `@cipher-auth/react`    | ![npm](https://img.shields.io/npm/v/@cipher-auth/react)    | React components & hooks     |
-| `@cipher-auth/vue`      | ![npm](https://img.shields.io/npm/v/@cipher-auth/vue)      | Vue components (coming soon) |
-| `@cipher-auth/mongoose` | ![npm](https://img.shields.io/npm/v/@cipher-auth/mongoose) | MongoDB/Mongoose adapter     |
-| `@cipher-auth/prisma`   | ![npm](https://img.shields.io/npm/v/@cipher-auth/prisma)   | Prisma adapter               |
-| `@cipher-auth/cli`      | ![npm](https://img.shields.io/npm/v/@cipher-auth/cli)      | CLI tool (coming soon)       |
+| Package | Version | Description |
+|---------|---------|-------------|
+| `@cipher-auth/core` | ![npm](https://img.shields.io/npm/v/@cipher-auth/core) | Core authentication SDK |
+| `@cipher-auth/client` | ![npm](https://img.shields.io/npm/v/@cipher-auth/client) | Framework-agnostic client |
+| `@cipher-auth/react` | ![npm](https://img.shields.io/npm/v/@cipher-auth/react) | React components & hooks |
+| `@cipher-auth/vue` | ![npm](https://img.shields.io/npm/v/@cipher-auth/vue) | Vue components (coming soon) |
+| `@cipher-auth/mongoose` | ![npm](https://img.shields.io/npm/v/@cipher-auth/mongoose) | MongoDB/Mongoose adapter |
+| `@cipher-auth/prisma` | ![npm](https://img.shields.io/npm/v/@cipher-auth/prisma) | Prisma adapter |
+| `@cipher-auth/cli` | ![npm](https://img.shields.io/npm/v/@cipher-auth/cli) | CLI tool (coming soon) |
 
 ---
 
