@@ -19,6 +19,13 @@
   "type": "module",
   "main": "index.mjs",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "test": "turbo run test"
+  },
+  "devDependencies": {
+    "@types/node": "^25.2.3",
+    "turbo": "^2.8.6",
+    "typescript": "^5.9.3"
   }
 }
