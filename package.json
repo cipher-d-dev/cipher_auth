@@ -1,0 +1,23 @@
+{
+  "name": "cipher-auth",
+  "version": "1.0.0",
+  "description": "Modern authentication infrastructure for Javascript/TypeScript based applications. Secure by default, customizable by design, with the DX you actually want.",
+  "keywords": [
+    "Authentication"
+  ],
+  "homepage": "https://github.com/cihper-d-dev/cipher_auth#readme",
+  "bugs": {
+    "url": "https://github.com/cihper-d-dev/cipher_auth/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cihper-d-dev/cipher_auth.git"
+  },
+  "license": "ISC",
+  "author": "cipher-d-dev",
+  "type": "module",
+  "main": "index.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
