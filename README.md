@@ -1,439 +1,348 @@
-# Cipher Auth - Development Roadmap
+# 🔐 Cipher Auth
 
-> **Mission**: Build a modern, TypeScript-first authentication SDK that combines the flexibility of Passport with the DX of Clerk - fully open-source and self-hostable.
+> Modern, TypeScript-first authentication for the next generation of web applications.
 
-**Team**: Cipher & Jamal  
-**Timeline**: 3-5 Months  
-**Target Launch**: Month 5 (v1.0.0)
+**Cipher Auth** combines the battle-tested reliability of Passport.js with a modern TypeScript-native API, pre-built UI components, and exceptional developer experience. Think Passport meets Clerk - fully open-source and self-hostable.
 
----
-
-## 🎯 Project Vision
-
-Cipher Auth will be a full-stack authentication SDK that provides:
-- **Backend**: Strategy-based auth system (like Passport) with modern TypeScript
-- **Frontend**: Pre-built UI components (like Clerk) that are fully customizable
-- **Security**: Enterprise-grade security built-in from day one
-- **Flexibility**: Self-hosted first, optional managed service later
-
-### Key Differentiators
-✅ Fully open-source & self-hostable  
-✅ TypeScript-native with complete type safety  
-✅ Customizable UI components (not iframes)  
-✅ Database agnostic (Prisma, Mongoose, Drizzle, etc.)  
-✅ Framework agnostic (Express, Fastify, Next.js, etc.)  
-✅ No vendor lock-in
+[![npm version](https://img.shields.io/npm/v/@cipher-auth/core.svg)](https://www.npmjs.com/package/@cipher-auth/core)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![TypeScript](https://img.shields.io/badge/TypeScript-100%25-blue)](https://www.typescriptlang.org/)
 
 ---
 
-## 📦 Package Structure
+## ✨ Why Cipher Auth?
 
+### 🎯 Built on Proven Foundations
+
+Cipher Auth leverages battle-tested OAuth implementations from **Passport.js** - a library trusted in production by millions of applications for over a decade. We stand on the shoulders of giants, then add the modern DX you deserve.
+
+### 🚀 What Makes Us Different
+
+| Feature                     | Cipher Auth                   | Passport.js       | Clerk                    |
+| --------------------------- | ----------------------------- | ----------------- | ------------------------ |
+| **TypeScript-First**        | ✅ Full type safety           | ⚠️ JS with types  | ✅ Yes                   |
+| **Modern Async/Await**      | ✅ Native promises            | ❌ Callbacks      | ✅ Yes                   |
+| **Pre-built UI Components** | ✅ Customizable               | ❌ None           | ⚠️ Limited customization |
+| **Self-Hostable**           | ✅ Fully                      | ✅ Yes            | ❌ Managed only          |
+| **Database Agnostic**       | ✅ Multiple adapters          | ⚠️ DIY            | ⚠️ Locked-in             |
+| **Framework Agnostic**      | ✅ Express, Next.js, Fastify+ | ⚠️ Mostly Express | ✅ Yes                   |
+| **No Vendor Lock-in**       | ✅ Open source                | ✅ Open source    | ❌ Proprietary           |
+| **Pricing**                 | 🆓 Free forever               | 🆓 Free           | 💰 Usage-based           |
+
+---
+
+## 🎨 Features
+
+### 🔑 **Authentication Strategies**
+
+- ✅ **Local** - Email/password with secure hashing (argon2)
+- ✅ **Magic Link** - Passwordless email authentication
+- ✅ **OAuth 2.0** - Google, GitHub, Facebook, Twitter, and more
+- ✅ **Multi-Factor Auth** - TOTP, SMS, Email OTP, WebAuthn/Passkeys
+- 🔜 **SAML 2.0** - Enterprise SSO
+- 🔜 **LDAP/Active Directory** - On-premise integration
+
+### 🎨 **Pre-built UI Components**
+
+```tsx
+import { SignInForm, AuthProvider } from "@cipher-auth/react";
+
+function App() {
+  return (
+    <AuthProvider>
+      <SignInForm
+        providers={["google", "github"]}
+        onSuccess={(user) => console.log("Welcome!", user)}
+      />
+    </AuthProvider>
+  );
+}
 ```
-@cipher-auth/
-├── core                 # Backend SDK & strategies
-├── client              # Framework-agnostic client
-├── react               # React components & hooks
-├── vue                 # Vue components (Phase 3)
-├── svelte              # Svelte components (Phase 3)
-├── cli                 # CLI tool for setup & generation
-└── adapters/
-    ├── prisma          # Prisma adapter
-    ├── mongoose        # Mongoose adapter
-    └── drizzle         # Drizzle adapter
+
+- Fully customizable with Tailwind CSS or CSS variables
+- Accessible (WCAG 2.1 AA compliant)
+- Mobile-responsive out of the box
+- Dark mode support
+
+### 🛡️ **Enterprise-Grade Security**
+
+- ✅ **CSRF Protection** - Built-in token validation
+- ✅ **Rate Limiting** - Configurable brute-force protection
+- ✅ **Session Management** - Redis, PostgreSQL, MongoDB, or in-memory
+- ✅ **JWT Support** - Automatic token refresh and rotation
+- ✅ **Audit Logging** - Complete authentication event trail
+- ✅ **Device Tracking** - Monitor and manage active sessions
+
+### 🗄️ **Database Agnostic**
+
+```typescript
+import { CipherAuth } from "@cipher-auth/core";
+import { MongooseAdapter } from "@cipher-auth/mongoose";
+import { PrismaAdapter } from "@cipher-auth/prisma";
+
+// Use any database you want
+const auth = new CipherAuth({
+  adapter: new MongooseAdapter(/* ... */),
+  // or: new PrismaAdapter(/* ... */)
+  // or: new DrizzleAdapter(/* ... */)
+});
+```
+
+### 🔧 **Framework Support**
+
+- Express
+- Next.js (App Router & Pages Router)
+- Fastify
+- Koa
+- Hapi
+- NestJS
+
+---
+
+## 🚀 Quick Start
+
+### Installation
+
+```bash
+# Backend
+npm install @cipher-auth/core @cipher-auth/mongoose
+
+# Frontend (React)
+npm install @cipher-auth/react @cipher-auth/client
+```
+
+### Backend Setup (Express + MongoDB)
+
+```typescript
+import express from "express";
+import { CipherAuth } from "@cipher-auth/core";
+import { MongooseAdapter } from "@cipher-auth/mongoose";
+import { LocalStrategy, GoogleStrategy } from "@cipher-auth/strategies";
+
+const app = express();
+
+// Initialize Cipher Auth
+const auth = new CipherAuth({
+  adapter: new MongooseAdapter({
+    uri: process.env.MONGODB_URI,
+  }),
+  session: {
+    secret: process.env.SESSION_SECRET,
+    store: "redis", // or 'memory' for development
+  },
+});
+
+// Register strategies
+auth.use(new LocalStrategy());
+auth.use(
+  new GoogleStrategy({
+    clientId: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "/auth/google/callback",
+  }),
+);
+
+// Apply middleware
+app.use(auth.initialize());
+app.use(auth.session());
+
+// Auth routes
+app.post("/auth/signup", auth.authenticate("local-signup"));
+app.post("/auth/login", auth.authenticate("local"));
+app.get("/auth/google", auth.authenticate("google"));
+app.get(
+  "/auth/google/callback",
+  auth.authenticate("google", {
+    successRedirect: "/dashboard",
+    failureRedirect: "/login",
+  }),
+);
+
+app.listen(3000);
+```
+
+### Frontend Setup (React)
+
+```tsx
+import { AuthProvider, SignInForm, useAuth } from "@cipher-auth/react";
+
+function App() {
+  return (
+    <AuthProvider apiUrl="http://localhost:3000">
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/dashboard" element={<ProtectedDashboard />} />
+      </Routes>
+    </AuthProvider>
+  );
+}
+
+function LoginPage() {
+  return (
+    <SignInForm
+      providers={["google", "github"]}
+      enableMagicLink
+      onSuccess={(user) => (window.location.href = "/dashboard")}
+    />
+  );
+}
+
+function ProtectedDashboard() {
+  const { user, logout } = useAuth();
+
+  if (!user) return <Navigate to="/login" />;
+
+  return (
+    <div>
+      <h1>Welcome, {user.email}</h1>
+      <button onClick={logout}>Logout</button>
+    </div>
+  );
+}
 ```
 
 ---
 
-## 🗓️ Development Phases
+## 📚 Documentation
 
-### **Month 1: Foundation & Core Backend** 
-**Owner**: Cipher (Lead) + Jamal (Support)
-
-#### Week 1-2: Project Setup & Core Architecture
-- [ ] Initialize monorepo (Turborepo/pnpm workspaces)
-- [ ] Setup TypeScript configs, linting, formatting
-- [ ] Core strategy pattern implementation
-  - [ ] Base `Strategy` abstract class
-  - [ ] Strategy registration system
-  - [ ] Middleware pipeline architecture
-- [ ] Session management foundation
-  - [ ] Session store interface
-  - [ ] In-memory store (for dev)
-  - [ ] Redis adapter
-- [ ] Security primitives
-  - [ ] Password hashing (argon2)
-  - [ ] CSRF token generation/validation
-  - [ ] Rate limiting utilities
-
-#### Week 3-4: Framework Adapters & Database Layer
-- [ ] Express adapter (priority)
-- [ ] Next.js API routes adapter
-- [ ] Database adapter interface
-  - [ ] User model schema
-  - [ ] Session model schema
-  - [ ] OAuth connection schema
-- [ ] Mongoose adapter (MERN focus)
-- [ ] Prisma adapter (future-proofing)
-- [ ] JWT utilities (generate, verify, refresh)
-
-**Deliverable**: `@cipher-auth/core` v0.1.0 - Core SDK working with Express + MongoDB
+- [**Getting Started**](https://cipher-auth.dev/docs/getting-started)
+- [**Authentication Strategies**](https://cipher-auth.dev/docs/strategies)
+- [**UI Components**](https://cipher-auth.dev/docs/components)
+- [**API Reference**](https://cipher-auth.dev/docs/api)
+- [**Migration Guides**](https://cipher-auth.dev/docs/migrations)
+  - [From Passport.js](https://cipher-auth.dev/docs/migrations/passport)
+  - [From Clerk](https://cipher-auth.dev/docs/migrations/clerk)
+  - [From Auth0](https://cipher-auth.dev/docs/migrations/auth0)
 
 ---
 
-### **Month 2: Essential Strategies & Client SDK**
-**Owner**: Split - Cipher (Strategies) + Jamal (Client SDK)
+## 🏗️ Architecture & Philosophy
 
-#### Week 1-2: Authentication Strategies (Cipher)
-- [ ] Local Strategy (email/password)
-  - [ ] Registration with email verification
-  - [ ] Login with password
-  - [ ] Password reset flow
-  - [ ] Account lockout after failed attempts
-- [ ] Magic Link Strategy
-  - [ ] Passwordless email auth
-  - [ ] One-time tokens with expiry
-- [ ] OAuth 2.0 Base Implementation
-  - [ ] Generic OAuth 2.0 strategy with PKCE
-  - [ ] State parameter validation
-  - [ ] Token exchange handling
+### Standing on the Shoulders of Giants
 
-#### Week 3-4: Client SDK (Jamal)
-- [ ] `@cipher-auth/client` package
-  - [ ] Auth state management (login, logout, refresh)
-  - [ ] Automatic token attachment to requests
-  - [ ] Token refresh logic
-  - [ ] CSRF handling
-  - [ ] Local storage/cookie management
-- [ ] TypeScript types for client
-- [ ] Fetch/Axios interceptors
-- [ ] Error handling & retries
+Cipher Auth is built on proven authentication foundations:
 
-**Parallel Tasks**:
-- [ ] Google OAuth strategy (Cipher)
-- [ ] GitHub OAuth strategy (Cipher)
-- [ ] Client integration tests (Jamal)
+- **OAuth flows** leverage Passport.js strategies that have been battle-tested in millions of production applications
+- **Security primitives** use industry-standard libraries (argon2, node:crypto)
+- **Session management** follows established patterns with modern improvements
 
-**Deliverable**: Working local auth + OAuth with client SDK
+### Our Value Proposition
+
+We don't reinvent authentication - we make it **better**:
+
+1. **Modern TypeScript API** - Full type safety, better autocomplete, fewer bugs
+2. **Better Developer Experience** - Intuitive APIs, clear error messages, comprehensive docs
+3. **Pre-built Components** - Ship faster with production-ready UI
+4. **Unified Solution** - Backend + frontend in one cohesive package
+5. **Self-Hostable** - Your data, your infrastructure, your control
+
+### Transparency
+
+We believe in being open about our approach:
+
+- Built on Passport.js OAuth strategies (MIT licensed)
+- Custom implementations for session management, user handling, and UI
+- All source code available on [GitHub](https://github.com/yourusername/cipher-auth)
 
 ---
 
-### **Month 3: React Components & UI System**
-**Owner**: Jamal (Lead) + Cipher (Review/Integration)
+## 🛣️ Roadmap
 
-#### Week 1-2: Headless React Hooks
-- [ ] `<AuthProvider>` context provider
-- [ ] `useAuth()` hook (login, logout, signup)
-- [ ] `useUser()` hook (current user data)
-- [ ] `useSession()` hook (session state)
-- [ ] `useOAuth()` hook (social login)
-- [ ] Protected route component/HOC
+### ✅ v1.0 (Current)
 
-#### Week 3-4: Pre-built UI Components
-- [ ] Component architecture (Radix UI primitives)
-- [ ] Theming system (CSS variables + Tailwind)
-- [ ] `<SignInForm>` component
-  - [ ] Email/password fields
-  - [ ] Social login buttons
-  - [ ] Error states
-  - [ ] Loading states
-- [ ] `<SignUpForm>` component
-  - [ ] Email verification UI
-  - [ ] Password strength indicator
-  - [ ] Terms acceptance
-- [ ] `<ForgotPasswordForm>` component
-- [ ] `<ResetPasswordForm>` component
-- [ ] `<ProfileSettings>` component
-- [ ] Responsive design (mobile-first)
-- [ ] Accessibility (WCAG 2.1 AA)
+- [x] Core authentication SDK
+- [x] Local, Magic Link, OAuth strategies
+- [x] React components & hooks
+- [x] MongoDB & Prisma adapters
+- [x] Express & Next.js support
 
-**Parallel Tasks**:
-- [ ] Example app (Next.js + MongoDB) (Cipher)
-- [ ] Component Storybook setup (Jamal)
+### 🚧 v1.1 (Next)
 
-**Deliverable**: `@cipher-auth/react` v0.1.0 with full UI components
+- [ ] Multi-factor authentication (TOTP, SMS, WebAuthn)
+- [ ] Vue & Svelte components
+- [ ] RBAC & permissions system
+- [ ] Advanced audit logging
+- [ ] CLI tool for scaffolding
+
+### 🔮 v2.0 (Future)
+
+- [ ] SAML 2.0 support
+- [ ] LDAP/Active Directory
+- [ ] Custom OAuth strategy builder
+- [ ] Managed hosting option
+- [ ] Admin dashboard
+
+[View full roadmap →](https://github.com/yourusername/cipher-auth/blob/main/ROADMAP.md)
 
 ---
 
-### **Month 4: Advanced Features & Security Hardening**
-**Owner**: Split by feature
+## 🤝 Contributing
 
-#### Week 1-2: Multi-Factor Authentication (Cipher)
-- [ ] TOTP (Time-based OTP)
-  - [ ] QR code generation
-  - [ ] Backup codes
-  - [ ] Recovery flow
-- [ ] Email OTP strategy
-- [ ] SMS OTP integration (Twilio)
-- [ ] WebAuthn/Passkeys (FIDO2) - basic support
-- [ ] MFA UI components (Jamal helps)
+We welcome contributions! Cipher Auth is built by developers, for developers.
 
-#### Week 2-3: Enterprise Features (Jamal)
-- [ ] RBAC (Role-based access control)
-  - [ ] Role definition system
-  - [ ] Permission checking middleware
-  - [ ] UI components for role management
-- [ ] Organization/Team support (multi-tenancy)
-  - [ ] Organization model
-  - [ ] Member invitations
-  - [ ] Team switching UI
-- [ ] Audit logging system
-  - [ ] Event tracking
-  - [ ] Export capabilities
+```bash
+# Clone the repo
+git clone https://github.com/yourusername/cipher-auth.git
 
-#### Week 3-4: Security Hardening (Both)
-- [ ] Advanced session management
-  - [ ] Device tracking
-  - [ ] Concurrent session limits
-  - [ ] "Force logout all devices"
-- [ ] Anomaly detection (suspicious login alerts)
-- [ ] Bot protection (hCaptcha/Turnstile integration)
-- [ ] Security headers middleware
-- [ ] Complete security audit
-- [ ] Penetration testing
+# Install dependencies
+pnpm install
 
-**Parallel Tasks**:
-- [ ] More OAuth providers: Facebook, Twitter, LinkedIn (Cipher)
-- [ ] Email provider integrations: SendGrid, Resend (Jamal)
+# Run tests
+pnpm test
 
-**Deliverable**: Enterprise-ready auth system with MFA & RBAC
+# Start development
+pnpm dev
+```
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines.
 
 ---
 
-### **Month 5: Polish, Documentation & Launch**
-**Owner**: Both (Equal split)
+## 📦 Packages
 
-#### Week 1-2: Developer Experience
-- [ ] CLI tool (`@cipher-auth/cli`)
-  ```bash
-  cipher-auth init
-  cipher-auth add-strategy google
-  cipher-auth generate migration
-  ```
-- [ ] VS Code extension with snippets
-- [ ] Testing utilities & mocks
-- [ ] Migration scripts from Passport
-- [ ] TypeScript config templates
-
-#### Week 2-3: Documentation (CRITICAL)
-- [ ] Documentation site (Nextra or VitePress)
-  - [ ] Quickstart guide (5-minute setup)
-  - [ ] Installation for each framework
-  - [ ] Strategy guides (each auth method)
-  - [ ] Component API reference
-  - [ ] Security best practices
-  - [ ] Deployment guides (Vercel, Railway, Fly.io)
-- [ ] Interactive examples/playground
-- [ ] Video tutorials (at least 3)
-  - [ ] Getting started
-  - [ ] Adding OAuth
-  - [ ] Customizing UI components
-- [ ] Migration guides
-  - [ ] From Passport.js
-  - [ ] From Clerk
-  - [ ] From Auth0
-
-#### Week 3-4: Final Polish & Launch Prep
-- [ ] Complete example apps
-  - [ ] Next.js + Prisma + PostgreSQL
-  - [ ] Express + Mongoose + MongoDB (MERN)
-  - [ ] Fastify + Drizzle + SQLite
-- [ ] Performance optimization
-- [ ] Bundle size optimization
-- [ ] Final security review
-- [ ] Open-source license (MIT)
-- [ ] Contributing guidelines
-- [ ] Code of conduct
-- [ ] npm package publishing setup
-
-#### Week 4: Launch 🚀
-- [ ] v1.0.0 release on npm
-- [ ] Launch blog post
-- [ ] Reddit (r/webdev, r/reactjs, r/node)
-- [ ] Hacker News
-- [ ] Product Hunt
-- [ ] Twitter/X announcement
-- [ ] Dev.to article
-- [ ] YouTube demo
-
-**Deliverable**: v1.0.0 public release with complete documentation
+| Package                 | Version                                                    | Description                  |
+| ----------------------- | ---------------------------------------------------------- | ---------------------------- |
+| `@cipher-auth/core`     | ![npm](https://img.shields.io/npm/v/@cipher-auth/core)     | Core authentication SDK      |
+| `@cipher-auth/client`   | ![npm](https://img.shields.io/npm/v/@cipher-auth/client)   | Framework-agnostic client    |
+| `@cipher-auth/react`    | ![npm](https://img.shields.io/npm/v/@cipher-auth/react)    | React components & hooks     |
+| `@cipher-auth/vue`      | ![npm](https://img.shields.io/npm/v/@cipher-auth/vue)      | Vue components (coming soon) |
+| `@cipher-auth/mongoose` | ![npm](https://img.shields.io/npm/v/@cipher-auth/mongoose) | MongoDB/Mongoose adapter     |
+| `@cipher-auth/prisma`   | ![npm](https://img.shields.io/npm/v/@cipher-auth/prisma)   | Prisma adapter               |
+| `@cipher-auth/cli`      | ![npm](https://img.shields.io/npm/v/@cipher-auth/cli)      | CLI tool (coming soon)       |
 
 ---
 
-## 🎯 MVP Scope (If timeline slips)
+## 🙏 Acknowledgments
 
-**Must-Have for v1.0**:
-- ✅ Core backend SDK (`@cipher-auth/core`)
-- ✅ Express adapter
-- ✅ Local strategy (email/password)
-- ✅ Google + GitHub OAuth
-- ✅ Mongoose adapter (MongoDB)
-- ✅ React components (`@cipher-auth/react`)
-- ✅ Session management (Redis + in-memory)
-- ✅ JWT support
-- ✅ Basic documentation
-- ✅ 1 complete example app
+Cipher Auth wouldn't exist without:
 
-**Nice-to-Have (can be v1.1+)**:
-- ⭕ Vue/Svelte components
-- ⭕ SAML/LDAP strategies
-- ⭕ Prisma/Drizzle adapters
-- ⭕ WebAuthn/Passkeys
-- ⭕ Advanced audit logging
-- ⭕ CLI tool
-- ⭕ Managed hosting service
+- **[Passport.js](https://www.passportjs.org/)** - The foundation of our OAuth implementations
+- **[Radix UI](https://www.radix-ui.com/)** - Accessible component primitives
+- **[Clerk](https://clerk.com/)** - Inspiration for great auth DX
+- **The open-source community** - For continuous feedback and contributions
 
 ---
 
-## 👥 Role Distribution
+## 📄 License
 
-### Cipher (You)
-**Primary Focus**: Backend, strategies, architecture
-- Core SDK architecture
-- Authentication strategies
-- Security implementation
-- Database adapters
-- OAuth integrations
-- Example apps
-
-### Jamal
-**Primary Focus**: Frontend, UI/UX, client SDK
-- Client SDK (`@cipher-auth/client`)
-- React components
-- UI/UX design
-- Component theming
-- Storybook setup
-- Frontend documentation
-
-### Shared Responsibilities
-- Code reviews for each other
-- Testing (unit + integration)
-- Documentation writing
-- Example app development
-- Security auditing
-- Launch preparation
+MIT © [Cipher & Jamal](./LICENSE)
 
 ---
 
-## 🛠️ Tech Stack
+## 💬 Community & Support
 
-### Backend
-- **Language**: TypeScript
-- **Runtime**: Node.js 18+
-- **Hashing**: argon2
-- **Encryption**: node:crypto, libsodium
-- **Validation**: Zod
-- **Testing**: Vitest
-
-### Frontend
-- **Framework Support**: React (priority), Vue, Svelte
-- **UI Primitives**: Radix UI
-- **Styling**: Tailwind CSS + CSS variables
-- **State Management**: React Context + hooks
-- **Testing**: Vitest + Testing Library
-
-### Infrastructure
-- **Monorepo**: Turborepo
-- **Package Manager**: pnpm
-- **Build Tool**: tsup
-- **Docs**: Nextra or VitePress
-- **CI/CD**: GitHub Actions
-
-### Databases (via adapters)
-- MongoDB (Mongoose) - Priority
-- PostgreSQL (Prisma)
-- MySQL (Prisma)
-- SQLite (Drizzle)
+- 📖 [Documentation](https://cipher-auth.dev)
+- 💬 [Discord Community](https://discord.gg/cipher-auth)
+- 🐦 [Twitter](https://twitter.com/cipher_auth)
+- 🐛 [Issue Tracker](https://github.com/yourusername/cipher-auth/issues)
+- 📧 [Email Support](mailto:support@cipher-auth.dev)
 
 ---
 
-## 📊 Success Metrics
+<div align="center">
 
-### Technical Metrics
-- [ ] 90%+ test coverage
-- [ ] <50kb gzipped bundle size (core)
-- [ ] <100ms auth check latency
-- [ ] Zero critical security vulnerabilities
-- [ ] TypeScript strict mode throughout
+**Built with ❤️ by developers who were tired of complicated auth**
 
-### Adoption Metrics (Month 6+)
-- [ ] 1,000+ npm downloads/week
-- [ ] 500+ GitHub stars
-- [ ] 10+ community contributions
-- [ ] 5+ production deployments reported
+[Get Started](https://cipher-auth.dev/docs/getting-started) • [View Demo](https://demo.cipher-auth.dev) • [Star on GitHub](https://github.com/yourusername/cipher-auth)
 
----
-
-## 🚨 Risk Management
-
-### Potential Blockers
-1. **Security vulnerabilities**: Mitigate with regular audits, use proven crypto libraries
-2. **Scope creep**: Stick to MVP, defer non-critical features to v1.1+
-3. **Performance issues**: Benchmark early and often
-4. **Documentation lag**: Write docs as you code, not after
-
-### Contingency Plans
-- If Month 3 slips → Cut Vue/Svelte components to v1.1
-- If Month 4 slips → Defer MFA to v1.1, keep RBAC
-- If Month 5 slips → Launch with minimal docs, improve post-launch
-
----
-
-## 📞 Communication & Workflow
-
-### Daily Sync
-- Quick standup (async or 15min call)
-- What did you do yesterday?
-- What are you doing today?
-- Any blockers?
-
-### Weekly Review
-- Demo progress
-- Code review session
-- Plan next week's tasks
-- Adjust timeline if needed
-
-### Tools
-- **Code**: GitHub (main repo)
-- **Project Management**: GitHub Projects or Linear
-- **Communication**: Discord/Slack
-- **Documentation**: Notion or Markdown in repo
-
----
-
-## 🎉 Post-Launch Roadmap (Month 6+)
-
-### Community & Growth
-- Build Discord community
-- Accept community PRs
-- Strategy marketplace/plugin system
-- More framework adapters (SvelteKit, Solid, Astro)
-
-### Enterprise Features
-- SAML 2.0 support
-- LDAP/Active Directory
-- Advanced compliance (SOC 2 docs)
-- On-premise deployment guides
-
-### Managed Service (Optional Revenue)
-- Hosted version (cipher-auth.com)
-- Dashboard for user management
-- Analytics & insights
-- Generous free tier
-- Pro/Enterprise pricing
-
----
-
-## 🔥 Let's Build This!
-
-**Next Steps**:
-1. Review this roadmap together
-2. Set up the monorepo structure
-3. Divide Month 1 tasks
-4. Start coding! 🚀
-
-**Remember**: Ship fast, iterate faster. v1.0 doesn't need to be perfect - it needs to work and solve real problems.
-
----
-
-_Last Updated: [Date]_  
-_Version: 1.0_
+</div>
