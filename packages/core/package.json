@@ -1,15 +1,20 @@
 {
   "name": "@cipher-auth/core",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Core Authentication SDK for Cipher Auth",
+  "main": "./dist/index.ts",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "dev": "tsc -w",
+    "clean": "rimraf dist",
+    "test": "echo \"No tests yet\""
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "packageManager": "pnpm@10.29.3",
   "dependencies": {
     "argon2": "^0.44.0",
     "cookie-parser": "^1.4.7",
@@ -20,6 +25,26 @@
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6"
-  }
+    "@types/express": "^5.0.6",
+    "typescript": "^5.4.0",
+    "rimraf": "^5.0.5"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cipher-d-dev/cipher_auth.git",
+    "directory": "core"
+  },
+  "keywords": [
+    "authentication",
+    "auth",
+    "typescript",
+    "sdk",
+    "cipher"
+  ],
+  "author": "cipher-d-dev",
+  "license": "MIT",
+  "packageManager": "pnpm@10.29.3"
 }

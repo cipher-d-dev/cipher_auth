@@ -1,2 +1,7 @@
 packages:
-  - 'packages/*'
+  - packages/*
+  - apps/*
+
+ignoredBuiltDependencies:
+  - argon2
+  - esbuild
