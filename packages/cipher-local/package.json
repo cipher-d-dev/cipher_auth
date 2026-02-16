@@ -1,14 +1,9 @@
 {
-  "name": "@cipher-auth/core",
+  "name": "@cipher-auth/cipher-local",
   "version": "1.0.0",
-  "description": "Core Authentication SDK for Cipher Auth",
+  "description": "Local Authentication SDK for Cipher Auth",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ],
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w",
@@ -17,17 +12,25 @@
   },
   "dependencies": {
     "argon2": "^0.44.0",
+    "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "express-validator": "^7.3.1",
     "ioredis": "^5.9.2",
-    "passport": "^0.7.0"
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.2.1",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-local": "^1.0.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
-    "@types/passport": "^1.0.17",
+    "@types/passport-local": "^1.0.38",
     "rimraf": "^5.0.5",
     "tsup": "^8.5.1",
     "typescript": "^5.4.0"
@@ -38,7 +41,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cipher-d-dev/cipher_auth.git",
-    "directory": "core"
+    "directory": "packages/cipher-local"
   },
   "keywords": [
     "authentication",
