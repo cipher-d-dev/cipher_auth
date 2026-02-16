@@ -85,4 +85,4 @@ class MongooseCipherAuthLocalStrategy {
   }
 }
 
-export default { CipherLocal, MongooseCipherAuthLocalStrategy };
+export { CipherLocal, MongooseCipherAuthLocalStrategy };
