@@ -1,5 +1,5 @@
 {
-  "name": "@cipher-auth/core",
+  "name": "@cipher-d-dev/core",
   "version": "1.0.0",
   "description": "Core Authentication SDK for Cipher Auth",
   "main": "./dist/index.js",
@@ -15,21 +15,12 @@
     "clean": "rimraf dist",
     "test": "echo \"No tests yet\""
   },
-  "dependencies": {
-    "argon2": "^0.44.0",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.6",
-    "express": "^5.2.1",
-    "ioredis": "^5.9.2",
+  "peerDependencies": {
     "passport": "^0.7.0"
   },
   "devDependencies": {
-    "@types/cookie-parser": "^1.4.10",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
     "@types/passport": "^1.0.17",
-    "rimraf": "^5.0.5",
-    "tsup": "^8.5.1",
+    "depcheck": "^1.4.7",
     "typescript": "^5.4.0"
   },
   "publishConfig": {
