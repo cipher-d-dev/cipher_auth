@@ -1,6 +1,6 @@
 {
   "name": "@cipher-d-dev/cipher-local",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Local Authentication SDK for Cipher Auth",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
